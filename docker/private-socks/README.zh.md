@@ -39,6 +39,14 @@ docker compose logs -f
 
 如果日志出现 `open /etc/sing-box/config.json: permission denied`，说明宿主机配置仍属于 `root:root`；重新执行上面的 `chown` 与 `chmod`，然后运行 `docker compose restart`。
 
+如果出站日志出现 `dial tcp ...: operation not permitted`，请确认 `config.json` 的 `route` 中没有启用 `auto_detect_interface`。本容器已移除全部 Linux capabilities，而 Docker bridge 会自动选择 `eth0`，无需在核心中再次绑定接口：
+
+```json
+"route": {
+  "final": "private-socks-out"
+}
+```
+
 默认只监听 VPS 自身的 `127.0.0.1:8080`。同一台 VPS 上的软件可以这样使用：
 
 ```text

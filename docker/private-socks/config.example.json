@@ -30,7 +30,6 @@
     }
   ],
   "route": {
-    "final": "private-socks-out",
-    "auto_detect_interface": true
+    "final": "private-socks-out"
   }
 }

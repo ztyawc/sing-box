@@ -1,0 +1,36 @@
+{
+  "log": {
+    "level": "info",
+    "timestamp": true
+  },
+  "inbounds": [
+    {
+      "type": "http",
+      "tag": "http-in",
+      "listen": "0.0.0.0",
+      "listen_port": 8080,
+      "users": [
+        {
+          "username": "CHANGE_ME_HTTP_USERNAME",
+          "password": "CHANGE_ME_HTTP_PASSWORD"
+        }
+      ]
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "socks",
+      "tag": "private-socks-out",
+      "server": "example.invalid",
+      "server_port": 10800,
+      "version": "5",
+      "username": "1234567890123456789",
+      "password": "CHANGE_ME_PRIVATE_SOCKS_PASSWORD",
+      "private_auth_method": "0x80"
+    }
+  ],
+  "route": {
+    "final": "private-socks-out",
+    "auto_detect_interface": true
+  }
+}

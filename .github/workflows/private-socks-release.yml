@@ -1,6 +1,9 @@
 name: Build private SOCKS multi-platform release
 
 on:
+  push:
+    tags:
+      - private-socks-v*
   workflow_dispatch:
     inputs:
       image_tag:
@@ -30,9 +33,9 @@ concurrency:
 env:
   GO_VERSION: 1.25.12
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/sing-box-private-socks
-  IMAGE_TAG: ${{ inputs.image_tag }}
-  RELEASE_TAG: ${{ inputs.release_tag }}
-  VERSION_NAME: private-socks-${{ inputs.image_tag }}
+  IMAGE_TAG: ${{ inputs.image_tag || 'v2026.07.23-zty.2' }}
+  RELEASE_TAG: ${{ inputs.release_tag || 'private-socks-v2026.07.23-zty.2' }}
+  VERSION_NAME: private-socks-${{ inputs.image_tag || 'v2026.07.23-zty.2' }}
 
 jobs:
   verify:
@@ -241,7 +244,7 @@ jobs:
 
   publish-release:
     name: Publish GitHub Release
-    if: ${{ inputs.publish_release }}
+    if: ${{ github.event_name == 'push' || inputs.publish_release }}
     needs:
       - verify
       - build-binaries

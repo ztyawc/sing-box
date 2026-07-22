@@ -1,10 +1,10 @@
 services:
   private-socks-http:
-    image: ghcr.io/ztyawc/sing-box-private-socks:v2026.07.22-zty.1
+    image: ghcr.io/ztyawc/sing-box-private-socks:v2026.07.23-zty.2
     container_name: private-socks-http
     restart: unless-stopped
     ports:
-      - "${HTTP_BIND_ADDRESS:-127.0.0.1}:8080:8080/tcp"
+      - "${HTTP_BIND_ADDRESS:-127.0.0.1}:${HTTP_PORT:-8080}:8080/tcp"
     volumes:
       - ./config.json:/etc/sing-box/config.json:ro
     security_opt:

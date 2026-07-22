@@ -12,6 +12,7 @@
   "version": "5",
   "username": "sekai",
   "password": "admin",
+  "private_auth_method": "0x80",
   "network": "udp",
   "udp_over_tcp": false | {},
 
@@ -46,6 +47,14 @@ SOCKS 用户名。
 #### password
 
 SOCKS5 密码。
+
+#### private_auth_method
+
+设置为 `0x80` 或 `0x82` 时，启用私有 SOCKS5 认证及单向 XOR 变体。
+
+此选项要求使用 SOCKS5、恰好 19 字节的用户名和非空密码。客户端发往服务器的所有数据均与 `0xFF` 异或，服务器响应不做转换。
+
+留空时保持标准 SOCKS 行为。
 
 #### network
 

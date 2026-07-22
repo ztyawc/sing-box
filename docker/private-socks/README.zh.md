@@ -14,7 +14,6 @@ cd private-socks-http
 curl -LO https://github.com/ztyawc/sing-box/releases/download/private-socks-v2026.07.22-zty.1/config.example.json
 curl -Lo docker-compose.yml https://github.com/ztyawc/sing-box/releases/download/private-socks-v2026.07.22-zty.1/docker-compose.yml
 cp config.example.json config.json
-chmod 600 config.json
 ```
 
 编辑 `config.json`：
@@ -24,12 +23,21 @@ chmod 600 config.json
 - 私有 SOCKS 用户名必须恰好为 19 字节，密码不能为空。
 - 将 HTTP 入站的 `CHANGE_ME_HTTP_USERNAME` 和 `CHANGE_ME_HTTP_PASSWORD` 换成强凭据。
 
+保存后，将配置文件交给镜像内的非 root 用户并保持仅该用户可读：
+
+```bash
+chown 65532:65532 config.json
+chmod 600 config.json
+```
+
 启动并查看日志：
 
 ```bash
 docker compose up -d
 docker compose logs -f
 ```
+
+如果日志出现 `open /etc/sing-box/config.json: permission denied`，说明宿主机配置仍属于 `root:root`；重新执行上面的 `chown` 与 `chmod`，然后运行 `docker compose restart`。
 
 默认只监听 VPS 自身的 `127.0.0.1:8080`。同一台 VPS 上的软件可以这样使用：
 

@@ -30,7 +30,7 @@ type Outbound struct {
 	outbound.Adapter
 	dnsRouter adapter.DNSRouter
 	logger    logger.ContextLogger
-	client    *socks.Client
+	client    N.Dialer
 	resolve   bool
 	uotClient *uot.Client
 }
@@ -46,15 +46,29 @@ func NewOutbound(ctx context.Context, router adapter.Router, logger log.ContextL
 	if err != nil {
 		return nil, err
 	}
+	privateMethod, err := parsePrivateAuthMethod(options.PrivateAuthMethod)
+	if err != nil {
+		return nil, err
+	}
+	err = validatePrivateAuthOptions(version, privateMethod, options.Username, options.Password)
+	if err != nil {
+		return nil, err
+	}
 	outboundDialer, err := dialer.New(ctx, options.DialerOptions, options.ServerIsDomain())
 	if err != nil {
 		return nil, err
+	}
+	var client N.Dialer
+	if privateMethod != 0 {
+		client = newPrivateClient(outboundDialer, options.ServerOptions.Build(), privateMethod, options.Username, options.Password)
+	} else {
+		client = socks.NewClient(outboundDialer, options.ServerOptions.Build(), version, options.Username, options.Password)
 	}
 	outbound := &Outbound{
 		Adapter:   outbound.NewAdapterWithDialerOptions(C.TypeSOCKS, tag, options.Network.Build(), options.DialerOptions),
 		dnsRouter: service.FromContext[adapter.DNSRouter](ctx),
 		logger:    logger,
-		client:    socks.NewClient(outboundDialer, options.ServerOptions.Build(), version, options.Username, options.Password),
+		client:    client,
 		resolve:   version == socks.Version4,
 	}
 	uotOptions := common.PtrValueOrDefault(options.UDPOverTCP)

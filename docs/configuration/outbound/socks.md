@@ -12,6 +12,7 @@
   "version": "5",
   "username": "sekai",
   "password": "admin",
+  "private_auth_method": "0x80",
   "network": "udp",
   "udp_over_tcp": false | {},
 
@@ -46,6 +47,14 @@ SOCKS username.
 #### password
 
 SOCKS5 password.
+
+#### private_auth_method
+
+Enables the private SOCKS5 authentication and one-way XOR variant when set to `0x80` or `0x82`.
+
+This option requires SOCKS5, a username of exactly 19 bytes, and a non-empty password. All data sent from the client to the server is XORed with `0xFF`; server responses are not transformed.
+
+Leave this field empty for standard SOCKS behavior.
 
 #### network
 
